@@ -51,7 +51,7 @@ public class GameUI {
     }
 
     public boolean finish() {
-        return true;
+        return sudokuGrid.equals(sudokuGenerator.getSolvedGrid());
     }
 
     public void changeDifficulty(GameDifficulty difficulty) {

@@ -1,5 +1,7 @@
 package Sudoku;
 
+import java.util.Arrays;
+
 public class SudokuGrid {
 
     public static final int gridSize = 9;
@@ -20,10 +22,27 @@ public class SudokuGrid {
     }
 
     public void setGrid(int[][] grid) {
-        this.grid = grid;
+        for (int row = 0; row < gridSize; row++) {
+            for (int col = 0; col < gridSize; col++) {
+                this.grid[row][col] = grid[row][col];
+            }
+        }
     }
 
     public int[][] getGrid() {
         return grid;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SudokuGrid that = (SudokuGrid) o;
+        return Arrays.equals(grid, that.grid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(grid);
     }
 }
