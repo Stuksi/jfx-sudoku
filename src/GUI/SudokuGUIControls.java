@@ -21,7 +21,7 @@ import javafx.util.Pair;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class SudokuControls implements Initializable {
+public class SudokuGUIControls implements Initializable {
 
     private final int GS = SudokuGrid.gridSize;
     private final int MGS = SudokuGrid.miniGridSize;
@@ -41,11 +41,12 @@ public class SudokuControls implements Initializable {
     private GridPane gpGrid;
 
     // Initialize
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         gridTiles = new Label[GS][GS];
         gameUI = new GameUI();
+
+        // Create the timer
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             seconds++;
             if (seconds == 60) {
@@ -56,6 +57,7 @@ public class SudokuControls implements Initializable {
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
 
+        // Saves all labels inside the grid (gpGrid) to the gridTiles matrix
         int row, col, rowIt = 0, colIt = 0;
         for (Node gpMiniGridIt : gpGrid.getChildren()) {
             if (gpMiniGridIt instanceof GridPane) {
@@ -85,6 +87,7 @@ public class SudokuControls implements Initializable {
         resetGame();
     }
 
+    // Renders all changes of the game grid to the GUI grid
     private void render() {
         SudokuGrid sudokuGrid = gameUI.getSudokuGrid();
 
@@ -98,7 +101,6 @@ public class SudokuControls implements Initializable {
     }
 
     // Key Listener
-
     @FXML
     void makeMove(KeyEvent event) {
         if (highlightedTile == null || !event.getCode().isDigitKey()) {
@@ -118,11 +120,13 @@ public class SudokuControls implements Initializable {
             case DIGIT9 -> number = 9;
         }
 
+        // Sets the input number to the highlighted tile (label), if 0 then the tile is reset
         highlightedTile.setText(number == 0 ? "" : "" + number);
         Pair<Integer, Integer> tilePosition = findTilePosition();
         gameUI.move(tilePosition.getKey(), tilePosition.getValue(), number);
     }
 
+    // Finds the tile (label) position of the highlighted tile (label)
     private Pair<Integer, Integer> findTilePosition() {
         for (int row = 0; row < GS; row++) {
             for (int col = 0; col < GS; col++) {
@@ -135,11 +139,11 @@ public class SudokuControls implements Initializable {
     }
 
     // Mouse Listener
-
     private final Background clickBackground = new Background(new BackgroundFill(Color.rgb(140, 250, 160), new CornerRadii(0), new Insets(0)));
     private final Background enterBackground = new Background(new BackgroundFill(Color.rgb(150, 180, 160), new CornerRadii(0), new Insets(0)));
     private final Background exitBackground = new Background(new BackgroundFill(Color.rgb(250, 250, 250), new CornerRadii(0), new Insets(0)));
 
+    // Highlights a tile when clicked (unhighlights it if its the same as the highlighted)
     @FXML
     void clickTile(MouseEvent event) {
         Label clickedTile = (Label) event.getSource();
@@ -158,6 +162,7 @@ public class SudokuControls implements Initializable {
         highlightedTile = clickedTile;
     }
 
+    // Sets the colour of a hovered tile
     @FXML
     void enterTile(MouseEvent event) {
         Label hoveredTile = (Label) event.getSource();
@@ -169,6 +174,7 @@ public class SudokuControls implements Initializable {
         hoveredTile.setBackground(enterBackground);
     }
 
+    // Resets the colour of a exited hovered tile
     @FXML
     void exitTile(MouseEvent event) {
         Label exitedTile = (Label) event.getSource();
@@ -182,8 +188,7 @@ public class SudokuControls implements Initializable {
 
     // Menu
 
-        // Game
-
+    // Game
     @FXML
     void resetGame() {
         timeline.stop();
@@ -197,17 +202,11 @@ public class SudokuControls implements Initializable {
     }
 
     @FXML
-    void openPlayerLogs() {
-
-    }
-
-    @FXML
     void quitGame() {
         System.exit(0);
     }
 
-        // Difficulty
-
+    // Difficulty
     @FXML
     void changeDifficultyEasy() {
         gameUI.changeDifficulty(GameDifficulty.EASY);
@@ -223,8 +222,7 @@ public class SudokuControls implements Initializable {
         gameUI.changeDifficulty(GameDifficulty.HARD);
     }
 
-        // Edit
-
+    // Edit
     @FXML
     void undoMove() {
         gameUI.undo();
@@ -246,6 +244,7 @@ public class SudokuControls implements Initializable {
     @FXML
     private HBox hbFailedFinish;
 
+    // Checks if the sudoku is solved and based on that outputs an appropriate message (If correct the game ends, else it continues)
     @FXML
     void finishGame() {
         if (finished) {
@@ -253,6 +252,7 @@ public class SudokuControls implements Initializable {
         }
         if (gameUI.finish()) {
             lblSuccessfulFinish.setVisible(true);
+            finished = true;
             timeline.stop();
         } else {
             hbFailedFinish.setVisible(true);
@@ -262,8 +262,12 @@ public class SudokuControls implements Initializable {
         }
     }
 
+    // Solves the current sudoku
     @FXML
     void solveSudoku() {
-
+        gameUI.solve();
+        finishGame();
+        hbFailedFinish.setVisible(false);
+        render();
     }
 }

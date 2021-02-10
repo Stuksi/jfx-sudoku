@@ -6,7 +6,9 @@ import java.util.Random;
 
 public class SudokuGenerator {
 
+    // Active sudoku
     private final SudokuGrid sudokuGrid;
+    // Solved version of the active sudoku
     private final SudokuGrid solvedGrid;
 
     private GameDifficulty gameDifficulty;
@@ -27,26 +29,29 @@ public class SudokuGenerator {
         r = new Random();
     }
 
+    // Generates a new random sudoku
     public void generate() {
         generatedGrid = new int[SudokuGrid.gridSize][SudokuGrid.gridSize];
 
         fillGrid();
         solvedGrid.setGrid(generatedGrid);
         reduceGrid();
-
         sudokuGrid.setGrid(generatedGrid);
     }
 
+    // Change the game difficulty
     public void setGameDifficulty(GameDifficulty gameDifficulty) {
         this.gameDifficulty = gameDifficulty;
     }
 
+    // Returns the solved version of the active sudoku
     public SudokuGrid getSolvedGrid() {
         return solvedGrid;
     }
 
     // Grid Generation
 
+    // Checks if the generated grid has empty cells
     private boolean checkGrid() {
         for (int row = 0; row < SudokuGrid.gridSize; row++) {
             for (int col = 0; col < SudokuGrid.gridSize; col++) {
@@ -58,6 +63,7 @@ public class SudokuGenerator {
         return true;
     }
 
+    // Counts the possible solutions of the generated grid
     private boolean solveGrid() {
         for (int row = 0; row < SudokuGrid.gridSize; row++) {
             for (int col = 0; col < SudokuGrid.gridSize; col++) {
@@ -83,6 +89,7 @@ public class SudokuGenerator {
         return false;
     }
 
+    // Checks if the number can be correctly placed in the specified cell (row, col)
     private boolean isValidPlacement(int row, int col, int number) {
         for (int colIt = 0; colIt < SudokuGrid.gridSize; colIt++) {
             if (generatedGrid[row][colIt] == number) {
@@ -109,6 +116,7 @@ public class SudokuGenerator {
         return true;
     }
 
+    // Fills (generates) the sudoku grid
     private boolean fillGrid() {
         for (int row = 0; row < SudokuGrid.gridSize; row++) {
             for (int col = 0; col < SudokuGrid.gridSize; col++) {
@@ -134,6 +142,7 @@ public class SudokuGenerator {
         return false;
     }
 
+    // Randomly shuffles the numberList
     private void shuffle() {
         int index, temp;
         for (int i = numberList.length - 1; i > 0; i--) {
@@ -145,6 +154,7 @@ public class SudokuGenerator {
         }
     }
 
+    // Removes as much elements from the grid while still maintaining only a single solution of the grid
     private void reduceGrid() {
         int attempts = switch (gameDifficulty) {
             case EASY -> 5;
@@ -154,6 +164,8 @@ public class SudokuGenerator {
 
         int row, col, temp;
         int[][] copyGrid = new int[SudokuGrid.gridSize][SudokuGrid.gridSize];
+
+        // More attempts means more chances to remove a single element and making a harder to solve grid
         while (attempts > 0) {
             do {
                 row = r.nextInt(SudokuGrid.gridSize);

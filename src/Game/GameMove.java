@@ -1,5 +1,6 @@
 package Game;
 
+// GameMove class is used to save the different move positions and the current and previous numbers in the move's cell
 public class GameMove {
 
     private final int row;

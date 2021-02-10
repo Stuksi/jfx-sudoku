@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 
 
-<Scene onKeyPressed="#makeMove" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.SudokuControls">
+<Scene onKeyPressed="#makeMove" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.SudokuGUIControls">
    <root>
       <GridPane alignment="CENTER" maxHeight="600.0" maxWidth="600.0" minHeight="600.0" minWidth="600.0" prefHeight="600.0" prefWidth="600.0">
          <columnConstraints>
@@ -39,7 +39,6 @@
                       <Menu mnemonicParsing="false" text="Game">
                         <items>
                           <MenuItem mnemonicParsing="false" onAction="#resetGame" text="New Game" />
-                              <MenuItem mnemonicParsing="false" onAction="#openPlayerLogs" text="Player Logs" />
                               <MenuItem mnemonicParsing="false" onAction="#quitGame" text="Exit" />
                         </items>
                       </Menu>

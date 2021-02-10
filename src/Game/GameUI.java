@@ -5,9 +5,10 @@ import Sudoku.SudokuGrid;
 
 import java.util.Stack;
 
+// GameUI is the control unit of the sudoku game
 public class GameUI {
 
-    private final SudokuGrid sudokuGrid;
+    private SudokuGrid sudokuGrid;
     private final SudokuGenerator sudokuGenerator;
     private final Stack<GameMove> undoMoves;
     private final Stack<GameMove> redoMoves;
@@ -19,17 +20,20 @@ public class GameUI {
         redoMoves = new Stack<>();
     }
 
+    // Destroys previous information and generates a new sudoku game
     public void newGame() {
         undoMoves.clear();
         redoMoves.clear();
         sudokuGenerator.generate();
     }
 
+    // Makes and saves the currently played move
     public void move(int row, int col, int number) {
         undoMoves.push(new GameMove(row, col, sudokuGrid.getAt(row, col), number));
         sudokuGrid.setAt(row, col, number);
     }
 
+    // Undoes to the previously played move
     public void undo() {
         if (undoMoves.empty()) {
             return;
@@ -40,6 +44,7 @@ public class GameUI {
         redoMoves.push(move);
     }
 
+    // Redoes to the last undid move
     public void redo() {
         if (redoMoves.empty()) {
             return;
@@ -50,14 +55,22 @@ public class GameUI {
         undoMoves.push(move);
     }
 
+    // Checks if the sudoku is correctly solved
     public boolean finish() {
         return sudokuGrid.equals(sudokuGenerator.getSolvedGrid());
     }
 
+    // Solves the current sudoku
+    public void solve() {
+        sudokuGrid = sudokuGenerator.getSolvedGrid();
+    }
+
+    // Changes the difficulty of the sudoku game
     public void changeDifficulty(GameDifficulty difficulty) {
         sudokuGenerator.setGameDifficulty(difficulty);
     }
 
+    // Returns the current sudoku grid
     public SudokuGrid getSudokuGrid() {
         return sudokuGrid;
     }

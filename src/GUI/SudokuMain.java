@@ -9,10 +9,11 @@ public class SudokuMain extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Scene gameScene = FXMLLoader.load(getClass().getResource("SudokuGUI.fxml"));
+        Scene menuScene = FXMLLoader.load(getClass().getResource("SudokuGUI.fxml"));
+        
         primaryStage.setResizable(false);
         primaryStage.setTitle("Sudoku");
-        primaryStage.setScene(gameScene);
+        primaryStage.setScene(menuScene);
         primaryStage.show();
     }
 
