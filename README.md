@@ -1,2 +1,2 @@
 # SudokuApp
-JavaFX RMI Sudoku Application
+JavaFX Sudoku Application
