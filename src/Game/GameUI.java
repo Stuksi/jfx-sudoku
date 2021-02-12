@@ -62,7 +62,7 @@ public class GameUI {
 
     // Solves the current sudoku
     public void solve() {
-        sudokuGrid = sudokuGenerator.getSolvedGrid();
+        sudokuGrid.setGrid(sudokuGenerator.getSolvedGrid().getGrid());
     }
 
     // Changes the difficulty of the sudoku game
@@ -73,5 +73,10 @@ public class GameUI {
     // Returns the current sudoku grid
     public SudokuGrid getSudokuGrid() {
         return sudokuGrid;
+    }
+
+    // Return the current game difficulty
+    public GameDifficulty getGameDifficulty() {
+        return sudokuGenerator.getGameDifficulty();
     }
 }

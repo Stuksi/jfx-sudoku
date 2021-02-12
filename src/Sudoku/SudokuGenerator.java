@@ -44,6 +44,11 @@ public class SudokuGenerator {
         this.gameDifficulty = gameDifficulty;
     }
 
+    // Set a new game difficulty
+    public GameDifficulty getGameDifficulty() {
+        return gameDifficulty;
+    }
+
     // Returns the solved version of the active sudoku
     public SudokuGrid getSolvedGrid() {
         return solvedGrid;

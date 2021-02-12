@@ -18,7 +18,11 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.util.Pair;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 public class SudokuGUIControls implements Initializable {
@@ -29,13 +33,15 @@ public class SudokuGUIControls implements Initializable {
     private GameUI gameUI;
 
     private Timeline timeline;
-    private int minutes = 0;
-    private int seconds = 0;
+    private int minutes;
+    private int seconds;
 
     private Label[][] gridTiles;
     private Label highlightedTile;
 
     private boolean finished;
+
+    private FileWriter fileWriter;
 
     @FXML
     private GridPane gpGrid;
@@ -45,6 +51,9 @@ public class SudokuGUIControls implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         gridTiles = new Label[GS][GS];
         gameUI = new GameUI();
+
+        seconds = 0;
+        minutes = 0;
 
         // Create the timer
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
@@ -103,7 +112,7 @@ public class SudokuGUIControls implements Initializable {
     // Key Listener
     @FXML
     void makeMove(KeyEvent event) {
-        if (highlightedTile == null || !event.getCode().isDigitKey()) {
+        if (finished || highlightedTile == null || !event.getCode().isDigitKey()) {
             return;
         }
 
@@ -123,7 +132,9 @@ public class SudokuGUIControls implements Initializable {
         // Sets the input number to the highlighted tile (label), if 0 then the tile is reset
         highlightedTile.setText(number == 0 ? "" : "" + number);
         Pair<Integer, Integer> tilePosition = findTilePosition();
-        gameUI.move(tilePosition.getKey(), tilePosition.getValue(), number);
+        if (tilePosition != null) {
+            gameUI.move(tilePosition.getKey(), tilePosition.getValue(), number);
+        }
     }
 
     // Finds the tile (label) position of the highlighted tile (label)
@@ -131,7 +142,7 @@ public class SudokuGUIControls implements Initializable {
         for (int row = 0; row < GS; row++) {
             for (int col = 0; col < GS; col++) {
                 if (highlightedTile == gridTiles[row][col]) {
-                    return new Pair(row, col);
+                    return new Pair<>(row, col);
                 }
             }
         }
@@ -143,7 +154,7 @@ public class SudokuGUIControls implements Initializable {
     private final Background enterBackground = new Background(new BackgroundFill(Color.rgb(150, 180, 160), new CornerRadii(0), new Insets(0)));
     private final Background exitBackground = new Background(new BackgroundFill(Color.rgb(250, 250, 250), new CornerRadii(0), new Insets(0)));
 
-    // Highlights a tile when clicked (unhighlights it if its the same as the highlighted)
+    // Highlights a tile when clicked (unhighlight it if its the same as the highlighted)
     @FXML
     void clickTile(MouseEvent event) {
         Label clickedTile = (Label) event.getSource();
@@ -197,6 +208,8 @@ public class SudokuGUIControls implements Initializable {
         seconds = 0;
         gameUI.newGame();
         lblTimer.setText("00:00");
+        lblSuccessfulFinish.setVisible(false);
+        hbFailedFinish.setVisible(false);
         render();
         timeline.play();
     }
@@ -250,10 +263,24 @@ public class SudokuGUIControls implements Initializable {
         if (finished) {
             return;
         }
+
         if (gameUI.finish()) {
             lblSuccessfulFinish.setVisible(true);
             finished = true;
             timeline.stop();
+            try {
+                fileWriter = new FileWriter("PlayerLogs.txt", true);
+                fileWriter.write(
+                        "Date - " + DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss").format(LocalDateTime.now()) +
+                                "\n\tSudoku { " + "Success" +
+                                ", Difficulty: " + gameUI.getGameDifficulty() +
+                                ", Time played: " + lblTimer.getText() +
+                                " };\n"
+                );
+                fileWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
             hbFailedFinish.setVisible(true);
             PauseTransition visiblePause = new PauseTransition(Duration.seconds(10));
@@ -266,8 +293,25 @@ public class SudokuGUIControls implements Initializable {
     @FXML
     void solveSudoku() {
         gameUI.solve();
-        finishGame();
-        hbFailedFinish.setVisible(false);
+        finished = true;
+        timeline.stop();
+        lblSuccessfulFinish.setVisible(true);
         render();
+
+        hbFailedFinish.setVisible(false);
+        try {
+            fileWriter = new FileWriter("PlayerLogs.txt", true);
+            fileWriter.write(
+                    "Date - " + DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss").format(LocalDateTime.now()) +
+                    "\n\tSudoku { " + "Failed" +
+                    ", Difficulty: " + gameUI.getGameDifficulty() +
+                    ", Time played: " + lblTimer.getText() +
+                    " };\n"
+            );
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
 }

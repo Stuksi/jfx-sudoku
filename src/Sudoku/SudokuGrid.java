@@ -1,7 +1,5 @@
 package Sudoku;
 
-import java.util.Arrays;
-
 // SudokuGrid - Data structure representing the cells of a 9x9 sudoku grid
 public class SudokuGrid {
 
@@ -36,16 +34,15 @@ public class SudokuGrid {
         return grid;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SudokuGrid that = (SudokuGrid) o;
-        return Arrays.equals(grid, that.grid);
-    }
-
-    @Override
-    public int hashCode() {
-        return Arrays.hashCode(grid);
+    public boolean equals(SudokuGrid sudokuGrid) {
+        int[][] grid = sudokuGrid.getGrid();
+        for (int row = 0; row < gridSize; row++) {
+            for (int col = 0; col < gridSize; col++) {
+                if (this.grid[row][col] != grid[row][col]) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

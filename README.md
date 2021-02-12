@@ -7,4 +7,4 @@ Java sudoku application with GUI (JavaFX).
 Simply download and unzip the .rar file in a specified directory, compile and run the `SudokuMain.java` file.
 
 ## Installation
-[JavaFXSudoku](https://github.com/Stuksi/SudokuApp/releases/download/v1.0/SudokuJava.zip)
+[JavaFXSudoku](https://github.com/Stuksi/SudokuApp/releases/download/v2.0/SudokuJava.zip)
